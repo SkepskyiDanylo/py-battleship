@@ -1,12 +1,15 @@
 class Deck:
-    def __init__(self, row: int, column: int, is_alive=True) -> None:
+    def __init__(self, row: int, column: int, is_alive: bool = True) -> None:
         self.row = row
         self.column = column
         self.is_alive = is_alive
 
 
 class Ship:
-    def __init__(self, start: tuple, end: tuple, is_drowned=False) -> None:
+    def __init__(self,
+                 start: tuple,
+                 end: tuple,
+                 is_drowned: bool = False) -> None:
         # Create decks and save them to a list `self.decks`
         self.is_drowned = is_drowned
         self.decks = [
@@ -14,12 +17,12 @@ class Ship:
             for column in range(start[0], end[0] + 1)
             for row in range(start[1], end[1] + 1)]
 
-    def get_deck(self, row, column):
+    def get_deck(self, row: int, column: int) -> Deck | None:
         for deck in self.decks:
             if row == deck.row and column == deck.column:
                 return deck
 
-    def fire(self, row, column):
+    def fire(self, row: int, column: int) -> None:
         # Change the `is_alive` status of the deck
         # And update the `is_drowned` value if it's needed
         self.get_deck(row, column).is_alive = False
@@ -43,7 +46,7 @@ class Battleship:
             for cord in cords:
                 self.field[cord] = ship
 
-    def fire(self, location: tuple):
+    def fire(self, location: tuple) -> None:
         # This function should check whether the location
         # is a key in the `self.field`
         # If it is, then it should check if this cell is the last alive
@@ -74,8 +77,6 @@ class Battleship:
                 else:
                     print(" ~ ", end="")
             print("")
-
-
 
 
 # ships = [
