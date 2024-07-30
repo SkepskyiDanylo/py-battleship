@@ -103,3 +103,27 @@ class Battleship:
                              f"3 double-deck ships, got {double} instead\n"
                              f"2 three-deck ships, got {triple} instead\n"
                              f"1 four-deck ship, got {quadro} instead")
+        for cord, ship in self.field.items():
+            row, column = cord
+            column -= 1
+            self._check_ceil(row, column, ship)
+            row -= 1
+            self._check_ceil(row, column, ship)
+            column += 1
+            self._check_ceil(row, column, ship)
+            column += 1
+            self._check_ceil(row, column, ship)
+            row += 1
+            self._check_ceil(row, column, ship)
+            row += 1
+            self._check_ceil(row, column, ship)
+            column -= 1
+            self._check_ceil(row, column, ship)
+            column -= 1
+            self._check_ceil(row, column, ship)
+
+    def _check_ceil(self, row: int, column: int, ship: Ship) -> None:
+        if (self.field.get((row, column))
+                and self.field.get((row, column)) != ship):
+            raise ValueError("Ships cannot be in neighboring cells"
+                             "(even if cells are neighbors by diagonal)")
