@@ -13,9 +13,9 @@ class Ship:
         # Create decks and save them to a list `self.decks`
         self.is_drowned = is_drowned
         self.decks = [
-            Deck(column, row)
-            for column in range(start[0], end[0] + 1)
-            for row in range(start[1], end[1] + 1)]
+            Deck(row, column)
+            for row in range(start[0], end[0] + 1)
+            for column in range(start[1], end[1] + 1)]
 
     def get_deck(self, row: int, column: int) -> Deck | None:
         for deck in self.decks:
@@ -31,7 +31,7 @@ class Ship:
 
 
 class Battleship:
-    def __init__(self, ships: list[tuple[tuple]]) -> None:
+    def __init__(self, ships: list[tuple]) -> None:
         # Create a dict `self.field`.
         # Its keys are tuples - the coordinates of the non-empty cells,
         # A value for each cell is a reference to the ship
@@ -39,14 +39,15 @@ class Battleship:
         self.field = {}
         for start, end in ships:
             cords = [
-                (column, row)
-                for column in range(start[0], end[0] + 1)
-                for row in range(start[1], end[1] + 1)]
+                (row, column)
+                for row in range(start[0], end[0] + 1)
+                for column in range(start[1], end[1] + 1)]
             ship = Ship(start, end)
             for cord in cords:
                 self.field[cord] = ship
+        self._validate_input(ships)
 
-    def fire(self, location: tuple) -> None:
+    def fire(self, location: tuple) -> str:
         # This function should check whether the location
         # is a key in the `self.field`
         # If it is, then it should check if this cell is the last alive
@@ -55,18 +56,18 @@ class Battleship:
         if ship:
             ship.fire(*location)
             if ship.is_drowned is True:
-                print("Sunk!")
+                return "Sunk!"
             else:
-                print("Hit!")
+                return "Hit!"
         else:
-            print("Miss!")
+            return "Miss!"
 
     def print_field(self) -> None:
-        for column in range(9 + 1):
-            for row in range(9 + 1):
-                ship = self.field.get((column, row))
+        for row in range(9 + 1):
+            for column in range(9 + 1):
+                ship = self.field.get((row, column))
                 if ship:
-                    deck = ship.get_deck(column, row)
+                    deck = ship.get_deck(row, column)
                     if ship.is_drowned:
                         print(" X ", end="")
                         continue
@@ -78,25 +79,27 @@ class Battleship:
                     print(" ~ ", end="")
             print("")
 
-
-# ships = [
-#     ((0, 0), (0, 3)),
-#     ((0, 5), (0, 6)),
-#     ((0, 8), (0, 9)),
-#     ((2, 0), (4, 0)),
-#     ((2, 4), (2, 6)),
-#     ((2, 8), (2, 9)),
-#     ((9, 9), (9, 9)),
-#     ((7, 7), (7, 7)),
-#     ((7, 9), (7, 9)),
-#     ((9, 7), (9, 7)),
-#
-# ]
-#
-#
-# battle = Battleship(ships)
-# battle.print_field()
-# battle.fire((2, 0))
-# battle.fire((3, 0))
-# battle.fire((4, 0))
-# battle.print_field()
+    def _validate_input(self, ships: list[tuple]) -> None:
+        if len(ships) < 10:
+            raise ValueError(f"Count of ships should be"
+                             f"equal 10, got {len(ships)} instead")
+        single = 0
+        double = 0
+        triple = 0
+        quadro = 0
+        ships = list(self.field.values())
+        for ship in set(ships):
+            if ships.count(ship) == 1:
+                single += 1
+            elif ships.count(ship) == 2:
+                double += 1
+            elif ships.count(ship) == 3:
+                triple += 1
+            elif ships.count(ship) == 4:
+                quadro += 1
+        if [single, double, triple, quadro] != [4, 3, 2, 1]:
+            raise ValueError(f"There should be: \n"
+                             f"4 one-deck ships, got {single} instead\n"
+                             f"3 double-deck ships, got {double} instead\n"
+                             f"2 three-deck ships, got {triple} instead\n"
+                             f"1 four-deck ship, got {quadro} instead")
