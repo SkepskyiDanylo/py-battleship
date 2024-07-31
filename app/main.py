@@ -83,44 +83,31 @@ class Battleship:
         if len(ships) < 10:
             raise ValueError(f"Count of ships should be"
                              f"equal 10, got {len(ships)} instead")
-        single = 0
-        double = 0
-        triple = 0
-        quadro = 0
-        ships = list(self.field.values())
-        for ship in set(ships):
-            if ships.count(ship) == 1:
-                single += 1
-            elif ships.count(ship) == 2:
-                double += 1
-            elif ships.count(ship) == 3:
-                triple += 1
-            elif ships.count(ship) == 4:
-                quadro += 1
-        if [single, double, triple, quadro] != [4, 3, 2, 1]:
+        count_of_ships = {
+            1: 0,
+            2: 0,
+            3: 0,
+            4: 0,
+        }
+        list_of_ships = list(self.field.values())
+        for ship in set(list_of_ships):
+            count_of_ships[list_of_ships.count(ship)] += 1
+
+        if ([count_of_ships[1], count_of_ships[2],
+             count_of_ships[3], count_of_ships[4]] != [4, 3, 2, 1]):
             raise ValueError(f"There should be: \n"
-                             f"4 one-deck ships, got {single} instead\n"
-                             f"3 double-deck ships, got {double} instead\n"
-                             f"2 three-deck ships, got {triple} instead\n"
-                             f"1 four-deck ship, got {quadro} instead")
+                             f"4 one-deck ships, "
+                             f"got {count_of_ships[1]} instead\n"
+                             f"3 double-deck ships, "
+                             f"got {count_of_ships[2]} instead\n"
+                             f"2 three-deck ships, "
+                             f"got {count_of_ships[3]} instead\n"
+                             f"1 four-deck ship, "
+                             f"got {count_of_ships[4]} instead")
         for cord, ship in self.field.items():
-            row, column = cord
-            column -= 1
-            self._check_ceil(row, column, ship)
-            row -= 1
-            self._check_ceil(row, column, ship)
-            column += 1
-            self._check_ceil(row, column, ship)
-            column += 1
-            self._check_ceil(row, column, ship)
-            row += 1
-            self._check_ceil(row, column, ship)
-            row += 1
-            self._check_ceil(row, column, ship)
-            column -= 1
-            self._check_ceil(row, column, ship)
-            column -= 1
-            self._check_ceil(row, column, ship)
+            for row in range(cord[0] - 1, cord[0] + 2):
+                for column in range(cord[1] - 1, cord[1] + 2):
+                    self._check_ceil(row, column, ship)
 
     def _check_ceil(self, row: int, column: int, ship: Ship) -> None:
         if (self.field.get((row, column))
