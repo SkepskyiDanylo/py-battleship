@@ -10,7 +10,6 @@ class Ship:
                  start: tuple,
                  end: tuple,
                  is_drowned: bool = False) -> None:
-        # Create decks and save them to a list `self.decks`
         self.is_drowned = is_drowned
         self.decks = [
             Deck(row, column)
@@ -23,8 +22,6 @@ class Ship:
                 return deck
 
     def fire(self, row: int, column: int) -> None:
-        # Change the `is_alive` status of the deck
-        # And update the `is_drowned` value if it's needed
         self.get_deck(row, column).is_alive = False
         if any([deck.is_alive for deck in self.decks]) is False:
             self.is_drowned = True
@@ -32,10 +29,6 @@ class Ship:
 
 class Battleship:
     def __init__(self, ships: list[tuple]) -> None:
-        # Create a dict `self.field`.
-        # Its keys are tuples - the coordinates of the non-empty cells,
-        # A value for each cell is a reference to the ship
-        # which is located in it
         self.field = {}
         for start, end in ships:
             cords = [
@@ -48,19 +41,13 @@ class Battleship:
         self._validate_input(ships)
 
     def fire(self, location: tuple) -> str:
-        # This function should check whether the location
-        # is a key in the `self.field`
-        # If it is, then it should check if this cell is the last alive
-        # in the ship or not.
         ship = self.field.get(location)
         if ship:
             ship.fire(*location)
             if ship.is_drowned is True:
                 return "Sunk!"
-            else:
-                return "Hit!"
-        else:
-            return "Miss!"
+            return "Hit!"
+        return "Miss!"
 
     def print_field(self) -> None:
         for row in range(9 + 1):
@@ -84,12 +71,7 @@ class Battleship:
         if len(ships) < 10:
             raise ValueError(f"Count of ships should be"
                              f"equal 10, got {len(ships)} instead")
-        count_of_ships = {
-            1: 0,
-            2: 0,
-            3: 0,
-            4: 0,
-        }
+        count_of_ships = {1: 0, 2: 0, 3: 0, 4: 0, }
         list_of_ships = list(self.field.values())
         # Counting each ship type, and adding it to dict
         for ship in set(list_of_ships):
